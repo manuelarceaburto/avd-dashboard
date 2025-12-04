@@ -18,16 +18,33 @@ const dbConfig = {
 app.use(express.json());
 app.use(express.static('public'));
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    database: pool ? 'connected' : 'disconnected',
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Database connection pool
 let pool;
 
 async function initDatabase() {
   try {
     pool = mysql.createPool(dbConfig);
-    console.log('✓ Connected to MySQL database');
+    // Test the connection
+    const connection = await pool.getConnection();
+    await connection.ping();
+    connection.release();
+    console.log('✓ Connected to database successfully');
+    console.log(`✓ Database: ${dbConfig.database} on ${dbConfig.host}:${dbConfig.port}`);
   } catch (error) {
     console.error('✗ Database connection failed:', error.message);
-    process.exit(1);
+    console.error('✗ App will continue but database features will not work');
+    // Don't exit - allow app to start even if DB is not ready
+    pool = null;
   }
 }
 
@@ -36,6 +53,9 @@ async function initDatabase() {
 // Get dashboard overview
 app.get('/api/overview', async (req, res) => {
   try {
+    if (!pool) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     const [stats] = await pool.query(`
       SELECT 
         COUNT(*) as total_sessions,
@@ -66,6 +86,9 @@ app.get('/api/overview', async (req, res) => {
 // Get active sessions
 app.get('/api/sessions', async (req, res) => {
   try {
+    if (!pool) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     const [sessions] = await pool.query(`
       SELECT 
         s.session_id,
@@ -92,6 +115,9 @@ app.get('/api/sessions', async (req, res) => {
 // Get host pool status
 app.get('/api/hostpools', async (req, res) => {
   try {
+    if (!pool) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     const [hostPools] = await pool.query(`
       SELECT 
         host_pool_id,
@@ -116,6 +142,9 @@ app.get('/api/hostpools', async (req, res) => {
 // Get performance metrics (last 24 hours)
 app.get('/api/metrics', async (req, res) => {
   try {
+    if (!pool) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     const [metrics] = await pool.query(`
       SELECT 
         DATE_FORMAT(timestamp, '%H:%i') as time,
@@ -138,6 +167,9 @@ app.get('/api/metrics', async (req, res) => {
 // Get user activity
 app.get('/api/users', async (req, res) => {
   try {
+    if (!pool) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     const [users] = await pool.query(`
       SELECT 
         u.user_id,
@@ -162,6 +194,9 @@ app.get('/api/users', async (req, res) => {
 // Get alerts
 app.get('/api/alerts', async (req, res) => {
   try {
+    if (!pool) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     const [alerts] = await pool.query(`
       SELECT 
         alert_id,
