@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: avd-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: avd_dashboard
+      MYSQL_USER: avd_user
+      MYSQL_PASSWORD: avd_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: avd-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: mysql
+      DB_USER: avd_user
+      DB_PASSWORD: avd_password
+      DB_NAME: avd_dashboard
+      PORT: 3000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: sh -c "sleep 10 && node server.js"
+
+volumes:
+  mysql_data:

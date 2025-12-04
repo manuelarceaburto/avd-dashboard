@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVD Dashboard - Cyberpunk Edition</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="scanline"></div>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="glitch" data-text="AVD::DASHBOARD">AVD::DASHBOARD</span>
+            </div>
+            <div class="header-stats">
+                <div class="status-indicator">
+                    <span class="pulse"></span>
+                    <span>SYSTEM ONLINE</span>
+                </div>
+                <div class="clock" id="clock"></div>
+            </div>
+        </header>
+
+        <!-- Overview Cards -->
+        <section class="overview-grid">
+            <div class="stat-card">
+                <div class="card-icon">⚡</div>
+                <div class="card-content">
+                    <div class="card-value" id="totalSessions">--</div>
+                    <div class="card-label">Total Sessions</div>
+                </div>
+                <div class="card-glow"></div>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon">🔥</div>
+                <div class="card-content">
+                    <div class="card-value" id="activeSessions">--</div>
+                    <div class="card-label">Active Sessions</div>
+                </div>
+                <div class="card-glow"></div>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon">👥</div>
+                <div class="card-content">
+                    <div class="card-value" id="totalUsers">--</div>
+                    <div class="card-label">Active Users</div>
+                </div>
+                <div class="card-glow"></div>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon">🖥️</div>
+                <div class="card-content">
+                    <div class="card-value" id="totalHosts">--</div>
+                    <div class="card-label">Host Pools</div>
+                </div>
+                <div class="card-glow"></div>
+            </div>
+        </section>
+
+        <!-- Main Content Grid -->
+        <div class="main-grid">
+            <!-- Performance Chart -->
+            <div class="panel chart-panel">
+                <div class="panel-header">
+                    <h2>SYSTEM PERFORMANCE</h2>
+                    <span class="badge">LIVE</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div class="panel alerts-panel">
+                <div class="panel-header">
+                    <h2>SYSTEM ALERTS</h2>
+                    <span class="alert-count" id="alertCount">0</span>
+                </div>
+                <div class="alerts-list" id="alertsList">
+                    <div class="loading">Scanning...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Host Pools -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2>HOST POOL STATUS</h2>
+                <span class="badge">MONITORED</span>
+            </div>
+            <div class="host-pools-grid" id="hostPoolsGrid">
+                <div class="loading">Loading host pools...</div>
+            </div>
+        </div>
+
+        <!-- Active Sessions Table -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2>ACTIVE SESSIONS</h2>
+                <span class="badge">REAL-TIME</span>
+            </div>
+            <div class="table-container">
+                <table class="cyber-table">
+                    <thead>
+                        <tr>
+                            <th>SESSION ID</th>
+                            <th>USER</th>
+                            <th>HOST POOL</th>
+                            <th>STATUS</th>
+                            <th>CPU %</th>
+                            <th>MEMORY %</th>
+                            <th>DURATION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessionsTable">
+                        <tr>
+                            <td colspan="7" class="loading">Loading sessions...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
